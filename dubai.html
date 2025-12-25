@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <title>Dubai 3D</title>
 
+  <!-- CesiumJS -->
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Cesium.js"></script>
-  <link href="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <link
+    href="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Widgets/widgets.css"
+    rel="stylesheet"
+  />
 
   <style>
     html, body, #cesiumContainer {
@@ -22,7 +26,10 @@
   <div id="cesiumContainer"></div>
 
   <script>
-    const viewer = new Cesium.Viewer('cesiumContainer', {
+    // 🔑 REQUIRED — replace with YOUR token
+    Cesium.Ion.defaultAccessToken = "PASTE_YOUR_CESIUM_ION_TOKEN_HERE";
+
+    const viewer = new Cesium.Viewer("cesiumContainer", {
       animation: false,
       timeline: false,
       baseLayerPicker: false,
@@ -30,16 +37,15 @@
       homeButton: false,
       sceneModePicker: false,
       navigationHelpButton: false,
-      fullscreenButton: false,
-      terrainProvider: Cesium.createWorldTerrain()
+      fullscreenButton: false
     });
 
-    // Fly to Dubai
+    // Fly camera to Dubai
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(
         55.2708,  // longitude
         25.2048,  // latitude
-        3000
+        3000      // height (meters)
       )
     });
   </script>
