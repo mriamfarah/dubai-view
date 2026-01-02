@@ -1,89 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Dubai 3D</title>
+    <meta charset="UTF-8">
+    <title>Dubai 3D Android</title>
 
-  <script src="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Cesium.js"></script>
-  <link
-    href="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Widgets/widgets.css"
-    rel="stylesheet"
-  />
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Cesium.js"></script>
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 
-  <style>
-    html, body, #cesiumContainer {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: #87ceeb;
-    }
-  </style>
+    <style>
+        html, body, #cesiumContainer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #87CEEB; /* prevent black flash */
+        }
+    </style>
 </head>
 
 <body>
 <div id="cesiumContainer"></div>
 
 <script>
-  Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxYjBmZWYzNS05ZDQ1LTQyYWEtYTViZi0zZDIzYzBjOGY0NjYiLCJpZCI6MzczMDY3LCJpYXQiOjE3NjY4MzYxMTV9.yEO4UnuWR0WJuWAmT5Yqyr7NMb7cpIPZKeRMiENDmVA";
+    Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxYjBmZWYzNS05ZDQ1LTQyYWEtYTViZi0zZDIzYzBjOGY0NjYiLCJpZCI6MzczMDY3LCJpYXQiOjE3NjY4MzYxMTV9.yEO4UnuWR0WJuWAmT5Yqyr7NMb7cpIPZKeRMiENDmVA";
 
-  const viewer = new Cesium.Viewer("cesiumContainer", {
-    sceneMode: Cesium.SceneMode.SCENE3D,
-    terrainProvider: Cesium.Terrain.fromWorldTerrain(),
-    baseLayerPicker: false,
-    geocoder: false,
-    animation: false,
-    timeline: false,
-    homeButton: false,
-    sceneModePicker: false,
-    navigationHelpButton: false,
-    fullscreenButton: false
-  });
+    /* 🔥 CREATE VIEWER WITHOUT DEFAULT IMAGERY */
+    const viewer = new Cesium.Viewer("cesiumContainer", {
+        imageryProvider: false,
+        terrainProvider: Cesium.Terrain.fromWorldTerrain(),
+        baseLayerPicker: false,
+        geocoder: false,
+        animation: false,
+        timeline: false,
+        homeButton: false,
+        sceneModePicker: false,
+        navigationHelpButton: false,
+        fullscreenButton: false
+    });
 
-  /* ❌ REMOVE ALL DEFAULT IMAGERY */
-  viewer.imageryLayers.removeAll();
+    /* ✅ ADD IMAGERY MANUALLY (CRITICAL FOR ANDROID) */
+    viewer.imageryLayers.addImageryProvider(
+        new Cesium.IonImageryProvider({ assetId: 2 }) // Bing Aerial
+    );
 
-  /* ✅ FORCE BING MAPS */
-  viewer.imageryLayers.addImageryProvider(
-    new Cesium.IonImageryProvider({ assetId: 2 })
-  );
+    /* 🏙️ OPTIONAL: 3D buildings */
+    viewer.scene.primitives.add(Cesium.createOsmBuildings());
 
-  /* 🏙️ 3D BUILDINGS */
-  viewer.scene.primitives.add(Cesium.createOsmBuildings());
+    /* ❌ REMOVE SPACE COMPLETELY */
+    viewer.scene.skyBox.show = false;
+    viewer.scene.skyAtmosphere.show = false;
 
-  /* 🔥 KILL SPACE COMPLETELY */
-  viewer.scene.skyBox.show = false;
-  viewer.scene.skyAtmosphere.show = false;
+    /* 🚫 PREVENT ZOOM TO SPACE */
+    viewer.scene.screenSpaceCameraController.minimumZoomDistance = 100;
+    viewer.scene.screenSpaceCameraController.maximumZoomDistance = 6000;
 
-  /* 🌍 LOCK GLOBE BEHAVIOR */
-  viewer.scene.globe.show = false; // hide until ready
-  viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString("#87CEEB");
-
-  /* 🚫 PREVENT ZOOMING INTO SPACE */
-  viewer.scene.screenSpaceCameraController.minimumZoomDistance = 100;
-  viewer.scene.screenSpaceCameraController.maximumZoomDistance = 8000;
-
-  /* 🎯 FORCE CAMERA IMMEDIATELY (NO ORBIT) */
-  viewer.camera.setView({
-    destination: Cesium.Cartesian3.fromDegrees(
-      55.2708,
-      25.2048,
-      4000
-    ),
-    orientation: {
-      heading: 0,
-      pitch: -0.6,
-      roll: 0
-    }
-  });
-
-  /* ✅ SHOW GLOBE ONLY AFTER TILES LOAD */
-  viewer.scene.globe.tileLoadProgressEvent.addEventListener(function (count) {
-    if (count === 0) {
-      viewer.scene.globe.show = true;
-    }
-  });
+    /* 🎯 FORCE CAMERA IMMEDIATELY */
+    viewer.camera.setView({
+        destination: Cesium.Cartesian3.fromDegrees(
+            55.2708,
+            25.2048,
+            3000
+        ),
+        orientation: {
+            heading: 0,
+            pitch: -0.6,
+            roll: 0
+        }
+    });
 </script>
+
 </body>
 </html>
