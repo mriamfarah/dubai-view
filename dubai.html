@@ -1,74 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Dubai 3D Android</title>
+<meta charset="UTF-8">
+<title>Dubai 3D Android & Browser</title>
 
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Cesium.js"></script>
-    <link href="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Cesium.js"></script>
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 
-    <style>
-        html, body, #cesiumContainer {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background: #87CEEB; /* prevent black flash */
-        }
-    </style>
+<style>
+    html, body, #cesiumContainer {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #87CEEB; /* sky-blue background to prevent space flash */
+    }
+
+    /* Simple loading overlay */
+    #loadingOverlay {
+        position: absolute;
+        top:0; left:0;
+        width: 100%;
+        height: 100%;
+        background: #87CEEB;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+        font-size: 24px;
+        color: #000;
+        z-index: 1000;
+    }
+</style>
 </head>
-
 <body>
 <div id="cesiumContainer"></div>
+<div id="loadingOverlay">Loading Dubai 3D...</div>
 
 <script>
-    Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxYjBmZWYzNS05ZDQ1LTQyYWEtYTViZi0zZDIzYzBjOGY0NjYiLCJpZCI6MzczMDY3LCJpYXQiOjE3NjY4MzYxMTV9.yEO4UnuWR0WJuWAmT5Yqyr7NMb7cpIPZKeRMiENDmVA";
+Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYjFhMzFmMC1kNzIzLTQzNTItOWU3Zi04MWJhYjA3ZDRjN2IiLCJpZCI6MzczMDY3LCJpYXQiOjE3NjY4MzY1NDF9.RrQ_xDzSRzGi9a7Y-1vhJu49UNgVnhLQCyIn15e0D3o";
 
-    /* 🔥 CREATE VIEWER WITHOUT DEFAULT IMAGERY */
-    const viewer = new Cesium.Viewer("cesiumContainer", {
-        imageryProvider: false,
-        terrainProvider: Cesium.Terrain.fromWorldTerrain(),
-        baseLayerPicker: false,
-        geocoder: false,
-        animation: false,
-        timeline: false,
-        homeButton: false,
-        sceneModePicker: false,
-        navigationHelpButton: false,
-        fullscreenButton: false
-    });
+/* CREATE VIEWER WITHOUT DEFAULT IMAGERY */
+const viewer = new Cesium.Viewer("cesiumContainer", {
+    imageryProvider: false,
+    terrainProvider: Cesium.Terrain.fromWorldTerrain(),
+    baseLayerPicker: false,
+    geocoder: false,
+    animation: false,
+    timeline: false,
+    homeButton: false,
+    sceneModePicker: false,
+    navigationHelpButton: false,
+    fullscreenButton: false
+});
 
-    /* ✅ ADD IMAGERY MANUALLY (CRITICAL FOR ANDROID) */
-    viewer.imageryLayers.addImageryProvider(
-        new Cesium.IonImageryProvider({ assetId: 2 }) // Bing Aerial
-    );
+/* ADD IMAGERY MANUALLY */
+viewer.imageryLayers.addImageryProvider(
+    new Cesium.IonImageryProvider({ assetId: 2 }) // Bing Aerial
+);
 
-    /* 🏙️ OPTIONAL: 3D buildings */
-    viewer.scene.primitives.add(Cesium.createOsmBuildings());
+/* OPTIONAL: 3D buildings */
+viewer.scene.primitives.add(Cesium.createOsmBuildings());
 
-    /* ❌ REMOVE SPACE COMPLETELY */
-    viewer.scene.skyBox.show = false;
-    viewer.scene.skyAtmosphere.show = false;
+/* REMOVE SPACE COMPLETELY */
+viewer.scene.skyBox.show = false;
+viewer.scene.skyAtmosphere.show = false;
+viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#87CEEB");
 
-    /* 🚫 PREVENT ZOOM TO SPACE */
-    viewer.scene.screenSpaceCameraController.minimumZoomDistance = 100;
-    viewer.scene.screenSpaceCameraController.maximumZoomDistance = 6000;
+/* PREVENT ZOOM TO SPACE */
+viewer.scene.screenSpaceCameraController.minimumZoomDistance = 100;
+viewer.scene.screenSpaceCameraController.maximumZoomDistance = 6000;
 
-    /* 🎯 FORCE CAMERA IMMEDIATELY */
-    viewer.camera.setView({
-        destination: Cesium.Cartesian3.fromDegrees(
-            55.2708,
-            25.2048,
-            3000
-        ),
-        orientation: {
-            heading: 0,
-            pitch: -0.6,
-            roll: 0
-        }
-    });
+/* FORCE CAMERA OVER DUBAI */
+viewer.camera.setView({
+    destination: Cesium.Cartesian3.fromDegrees(55.2708, 25.2048, 3000),
+    orientation: {
+        heading: 0,
+        pitch: -0.6,
+        roll: 0
+    }
+});
+
+/* SHOW GLOBE ONLY AFTER ALL TILES LOADED */
+viewer.scene.globe.show = false;
+
+viewer.scene.globe.tileLoadProgressEvent.addEventListener(function(count) {
+    if (count === 0) {
+        viewer.scene.globe.show = true;             // show globe
+        document.getElementById("loadingOverlay").style.display = "none"; // hide overlay
+    }
+});
 </script>
-
 </body>
 </html>
+
