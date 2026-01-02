@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <title>Dubai 3D</title>
 
+  <!-- CesiumJS -->
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Cesium.js"></script>
   <link
     href="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Widgets/widgets.css"
@@ -17,7 +18,6 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
-      background: black;
     }
   </style>
 </head>
@@ -26,48 +26,48 @@
   <div id="cesiumContainer"></div>
 
   <script>
-    // 🔑 TOKEN
+    // 🔑 Cesium Ion token (public, assets:read only)
     Cesium.Ion.defaultAccessToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxYjBmZWYzNS05ZDQ1LTQyYWEtYTViZi0zZDIzYzBjOGY0NjYiLCJpZCI6MzczMDY3LCJpYXQiOjE3NjY4MzYxMTV9.yEO4UnuWR0WJuWAmT5Yqyr7NMb7cpIPZKeRMiENDmVA";
+      "YOUR_TOKEN_HERE";
 
-    // 🌍 VIEWER
+    // 🌍 Viewer — EXPLICIT imagery + terrain
     const viewer = new Cesium.Viewer("cesiumContainer", {
-      sceneMode: Cesium.SceneMode.SCENE3D,
+      imageryProvider: new Cesium.IonImageryProvider({
+        assetId: 2 // Bing Maps Aerial
+      }),
       terrainProvider: Cesium.Terrain.fromWorldTerrain(),
-      imageryProvider: new Cesium.IonImageryProvider({ assetId: 2 }), // 🔥 SATELLITE
-      baseLayerPicker: false,
-      geocoder: false,
+
       animation: false,
       timeline: false,
+      baseLayerPicker: false,
+      geocoder: false,
       homeButton: false,
+      sceneModePicker: false,
       navigationHelpButton: false,
       fullscreenButton: false
     });
 
-    // 🧠 CRITICAL SETTINGS (FIX SPACE ISSUE)
-    viewer.scene.globe.enableLighting = true;
-    viewer.scene.globe.depthTestAgainstTerrain = true;
-    viewer.scene.skyBox.show = false;
-    viewer.scene.backgroundColor = Cesium.Color.BLACK;
-
-    // 🏙️ 3D BUILDINGS
+    // 🏙️ 3D Buildings
     viewer.scene.primitives.add(
       Cesium.createOsmBuildings()
     );
 
-    // ✈️ DUBAI
+    // 🌤️ Remove space visuals (important)
+    viewer.scene.skyBox.show = false;
+    viewer.scene.backgroundColor = Cesium.Color.BLACK;
+
+    // ✈️ Fly to Dubai
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(
         55.2708,
         25.2048,
-        3500
+        3000
       ),
       orientation: {
         heading: 0,
-        pitch: -0.8,
+        pitch: -0.6,
         roll: 0
-      },
-      duration: 2
+      }
     });
   </script>
 </body>
