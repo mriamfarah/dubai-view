@@ -26,10 +26,13 @@
   <div id="cesiumContainer"></div>
 
   <script>
-    // 🔑 REQUIRED — replace with YOUR token
-    Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxYjBmZWYzNS05ZDQ1LTQyYWEtYTViZi0zZDIzYzBjOGY0NjYiLCJpZCI6MzczMDY3LCJpYXQiOjE3NjY4MzYxMTV9.yEO4UnuWR0WJuWAmT5Yqyr7NMb7cpIPZKeRMiENDmVA";
+    // 🔑 Cesium Ion token
+    Cesium.Ion.defaultAccessToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxYjBmZWYzNS05ZDQ1LTQyYWEtYTViZi0zZDIzYzBjOGY0NjYiLCJpZCI6MzczMDY3LCJpYXQiOjE3NjY4MzYxMTV9.yEO4UnuWR0WJuWAmT5Yqyr7NMb7cpIPZKeRMiENDmVA";
 
+    // 🌍 Viewer WITH terrain
     const viewer = new Cesium.Viewer("cesiumContainer", {
+      terrainProvider: Cesium.Terrain.fromWorldTerrain(),
       animation: false,
       timeline: false,
       baseLayerPicker: false,
@@ -40,13 +43,23 @@
       fullscreenButton: false
     });
 
-    // Fly camera to Dubai
+    // 🏙️ LOAD REAL 3D BUILDINGS (THIS WAS MISSING)
+    viewer.scene.primitives.add(
+      Cesium.createOsmBuildings()
+    );
+
+    // ✈️ Fly to Dubai
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(
-        55.2708,  // longitude
-        25.2048,  // latitude
-        3000      // height (meters)
-      )
+        55.2708, // longitude
+        25.2048, // latitude
+        2500
+      ),
+      orientation: {
+        heading: 0,
+        pitch: -0.6,
+        roll: 0
+      }
     });
   </script>
 </body>
