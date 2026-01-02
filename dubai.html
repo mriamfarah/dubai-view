@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <title>Dubai 3D</title>
 
-  <!-- CesiumJS -->
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Cesium.js"></script>
   <link
     href="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Widgets/widgets.css"
@@ -23,53 +22,53 @@
 </head>
 
 <body>
-  <div id="cesiumContainer"></div>
+<div id="cesiumContainer"></div>
 
-  <script>
-    // 🔑 Cesium Ion token (public, assets:read only)
-    Cesium.Ion.defaultAccessToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYjFhMzFmMC1kNzIzLTQzNTItOWU3Zi04MWJhYjA3ZDRjN2IiLCJpZCI6MzczMDY3LCJpYXQiOjE3NjY4MzY1NDF9.RrQ_xDzSRzGi9a7Y-1vhJu49UNgVnhLQCyIn15e0D3o";
+<script>
+  Cesium.Ion.defaultAccessToken =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYjFhMzFmMC1kNzIzLTQzNTItOWU3Zi04MWJhYjA3ZDRjN2IiLCJpZCI6MzczMDY3LCJpYXQiOjE3NjY4MzY1NDF9.RrQ_xDzSRzGi9a7Y-1vhJu49UNgVnhLQCyIn15e0D3o";
 
-    // 🌍 Viewer — EXPLICIT imagery + terrain
-    const viewer = new Cesium.Viewer("cesiumContainer", {
-      imageryProvider: new Cesium.IonImageryProvider({
-        assetId: 2 // Bing Maps Aerial
-      }),
-      terrainProvider: Cesium.Terrain.fromWorldTerrain(),
+  const viewer = new Cesium.Viewer("cesiumContainer", {
+    terrainProvider: Cesium.Terrain.fromWorldTerrain(),
+    baseLayerPicker: false,
+    geocoder: false,
+    animation: false,
+    timeline: false,
+    homeButton: false,
+    sceneModePicker: false,
+    navigationHelpButton: false,
+    fullscreenButton: false
+  });
 
-      animation: false,
-      timeline: false,
-      baseLayerPicker: false,
-      geocoder: false,
-      homeButton: false,
-      sceneModePicker: false,
-      navigationHelpButton: false,
-      fullscreenButton: false
-    });
+  // Force Bing imagery (NO space fallback)
+  viewer.imageryLayers.removeAll();
+  viewer.imageryLayers.addImageryProvider(
+    new Cesium.IonImageryProvider({ assetId: 2 })
+  );
 
-    // 🏙️ 3D Buildings
-    viewer.scene.primitives.add(
-      Cesium.createOsmBuildings()
-    );
+  // 3D Buildings
+  viewer.scene.primitives.add(Cesium.createOsmBuildings());
 
-    // 🌤️ Remove space visuals (important)
-    viewer.scene.skyBox.show = false;
-    viewer.scene.backgroundColor = Cesium.Color.BLACK;
+  // 🔥 Kill ALL space visuals
+  viewer.scene.skyBox.show = false;
+  viewer.scene.skyAtmosphere.show = false;
+  viewer.scene.backgroundColor =
+    Cesium.Color.fromCssColorString("#87CEEB"); // sky blue
 
-    // ✈️ Fly to Dubai
-    viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(
-        55.2708,
-        25.2048,
-        3000
-      ),
-      orientation: {
-        heading: 0,
-        pitch: -0.6,
-        roll: 0
-      }
-    });
-  </script>
+  // Fly to Dubai
+  viewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(
+      55.2708,
+      25.2048,
+      3000
+    ),
+    orientation: {
+      heading: 0,
+      pitch: -0.6,
+      roll: 0
+    }
+  });
+</script>
 </body>
 </html>
 
