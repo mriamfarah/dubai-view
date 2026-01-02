@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <title>Dubai 3D</title>
 
-  <!-- CesiumJS -->
   <script src="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Cesium.js"></script>
   <link
     href="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Widgets/widgets.css"
@@ -18,6 +17,7 @@
       margin: 0;
       padding: 0;
       overflow: hidden;
+      background: black;
     }
   </style>
 </head>
@@ -26,45 +26,50 @@
   <div id="cesiumContainer"></div>
 
   <script>
-    // 🔑 Cesium Ion Token (VALID)
+    // 🔑 TOKEN
     Cesium.Ion.defaultAccessToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxYjBmZWYzNS05ZDQ1LTQyYWEtYTViZi0zZDIzYzBjOGY0NjYiLCJpZCI6MzczMDY3LCJpYXQiOjE3NjY4MzYxMTV9.yEO4UnuWR0WJuWAmT5Yqyr7NMb7cpIPZKeRMiENDmVA";
 
-    // 🌍 Viewer
+    // 🌍 VIEWER
     const viewer = new Cesium.Viewer("cesiumContainer", {
+      sceneMode: Cesium.SceneMode.SCENE3D,
       terrainProvider: Cesium.Terrain.fromWorldTerrain(),
-      animation: false,
-      timeline: false,
+      imageryProvider: new Cesium.IonImageryProvider({ assetId: 2 }), // 🔥 SATELLITE
       baseLayerPicker: false,
       geocoder: false,
+      animation: false,
+      timeline: false,
       homeButton: false,
-      sceneModePicker: false,
       navigationHelpButton: false,
-      fullscreenButton: false,
-      shouldAnimate: true
+      fullscreenButton: false
     });
 
-    // 🏙️ REAL 3D BUILDINGS (OSM)
-    const buildings = viewer.scene.primitives.add(
-      Cesium.createOsmBuildings({
-        enableShowOutline: true
-      })
+    // 🧠 CRITICAL SETTINGS (FIX SPACE ISSUE)
+    viewer.scene.globe.enableLighting = true;
+    viewer.scene.globe.depthTestAgainstTerrain = true;
+    viewer.scene.skyBox.show = false;
+    viewer.scene.backgroundColor = Cesium.Color.BLACK;
+
+    // 🏙️ 3D BUILDINGS
+    viewer.scene.primitives.add(
+      Cesium.createOsmBuildings()
     );
 
-    // ✈️ Fly to Dubai
+    // ✈️ DUBAI
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(
-        55.2708, // longitude
-        25.2048, // latitude
-        3000
+        55.2708,
+        25.2048,
+        3500
       ),
       orientation: {
         heading: 0,
-        pitch: -0.7,
+        pitch: -0.8,
         roll: 0
       },
-      duration: 3
+      duration: 2
     });
   </script>
 </body>
 </html>
+
