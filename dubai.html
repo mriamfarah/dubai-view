@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   <title>Dubai 3D</title>
 
   <!-- CesiumJS -->
@@ -26,11 +26,11 @@
   <div id="cesiumContainer"></div>
 
   <script>
-    // 🔑 Cesium Ion token
+    // 🔑 Cesium Ion Token (VALID)
     Cesium.Ion.defaultAccessToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxYjBmZWYzNS05ZDQ1LTQyYWEtYTViZi0zZDIzYzBjOGY0NjYiLCJpZCI6MzczMDY3LCJpYXQiOjE3NjY4MzYxMTV9.yEO4UnuWR0WJuWAmT5Yqyr7NMb7cpIPZKeRMiENDmVA";
 
-    // 🌍 Viewer WITH terrain
+    // 🌍 Viewer
     const viewer = new Cesium.Viewer("cesiumContainer", {
       terrainProvider: Cesium.Terrain.fromWorldTerrain(),
       animation: false,
@@ -40,12 +40,15 @@
       homeButton: false,
       sceneModePicker: false,
       navigationHelpButton: false,
-      fullscreenButton: false
+      fullscreenButton: false,
+      shouldAnimate: true
     });
 
-    // 🏙️ LOAD REAL 3D BUILDINGS (THIS WAS MISSING)
-    viewer.scene.primitives.add(
-      Cesium.createOsmBuildings()
+    // 🏙️ REAL 3D BUILDINGS (OSM)
+    const buildings = viewer.scene.primitives.add(
+      Cesium.createOsmBuildings({
+        enableShowOutline: true
+      })
     );
 
     // ✈️ Fly to Dubai
@@ -53,13 +56,14 @@
       destination: Cesium.Cartesian3.fromDegrees(
         55.2708, // longitude
         25.2048, // latitude
-        2500
+        3000
       ),
       orientation: {
         heading: 0,
-        pitch: -0.6,
+        pitch: -0.7,
         roll: 0
-      }
+      },
+      duration: 3
     });
   </script>
 </body>
