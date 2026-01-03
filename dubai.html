@@ -74,23 +74,21 @@ viewer.camera.setView({
     }
 });
 
-/* ✅ LOAD OSM BUILDINGS (CORRECT WAY) */
+/* ✅ LOAD BUILDINGS (ASYNC, NON-BLOCKING) */
 (async () => {
     try {
         const buildings = await Cesium.Cesium3DTileset.fromIonAssetId(96188);
         viewer.scene.primitives.add(buildings);
     } catch (e) {
-        console.error("Buildings failed:", e);
+        console.warn("Buildings skipped:", e);
     }
 })();
 
-/* HIDE LOADING WHEN READY */
-viewer.scene.globe.tileLoadProgressEvent.addEventListener(count => {
-    if (count === 0) {
-        document.getElementById("loadingOverlay").style.display = "none";
-    }
+/* ✅ HIDE LOADING AFTER FIRST FRAME RENDERS */
+viewer.scene.postRender.addEventListener(function hideLoaderOnce() {
+    document.getElementById("loadingOverlay").style.display = "none";
+    viewer.scene.postRender.removeEventListener(hideLoaderOnce);
 });
 </script>
 </body>
 </html>
-
