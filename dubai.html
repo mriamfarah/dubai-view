@@ -39,10 +39,10 @@ html, body, #cesiumContainer {
 Cesium.Ion.defaultAccessToken =
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhYjFhMzFmMC1kNzIzLTQzNTItOWU3Zi04MWJhYjA3ZDRjN2IiLCJpZCI6MzczMDY3LCJpYXQiOjE3NjY4MzY1NDF9.RrQ_xDzSRzGi9a7Y-1vhJu49UNgVnhLQCyIn15e0D3o";
 
-/* CREATE VIEWER (NO IMAGERY HERE) */
+/* CREATE VIEWER (NO IMAGERY) */
 const viewer = new Cesium.Viewer("cesiumContainer", {
-    terrainProvider: new Cesium.EllipsoidTerrainProvider(),
     imageryProvider: false,
+    terrainProvider: new Cesium.EllipsoidTerrainProvider(),
     baseLayerPicker: false,
     geocoder: false,
     animation: false,
@@ -53,11 +53,9 @@ const viewer = new Cesium.Viewer("cesiumContainer", {
     fullscreenButton: false
 });
 
-/* FORCE ADD IMAGERY LAYER (KEY FIX) */
+/* ✅ ADD OSM IMAGERY (CORRECT WAY) */
 viewer.imageryLayers.addImageryProvider(
-    new Cesium.UrlTemplateImageryProvider({
-        url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-    })
+    new Cesium.OpenStreetMapImageryProvider()
 );
 
 /* REMOVE SPACE */
