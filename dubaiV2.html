@@ -5,7 +5,10 @@
 <title>Dubai 3D</title>
 
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Cesium.js"></script>
-<link href="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Widgets/widgets.css" rel="stylesheet" />
+<link
+  href="https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/Widgets/widgets.css"
+  rel="stylesheet"
+/>
 
 <style>
 html, body, #cesiumContainer {
@@ -35,19 +38,19 @@ html, body, #cesiumContainer {
 <div id="loadingOverlay">Loading Dubai 3D…</div>
 
 <script>
-/* 🔴 THIS LINE IS MANDATORY ON GITHUB PAGES */
+/* 🔴 REQUIRED FOR GITHUB PAGES */
 Cesium.buildModuleUrl.setBaseUrl(
   "https://cesium.com/downloads/cesiumjs/releases/1.109/Build/Cesium/"
 );
 
-/* 🔑 ION TOKEN */
+/* 🔑 CESIUM ION TOKEN */
 Cesium.Ion.defaultAccessToken =
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhNmM4NjA0Yy0wMTZiLTQ1MDktOWNmMC02ZmNhY2FiZjUxZTMiLCJpZCI6MzczMDY3LCJpYXQiOjE3Njc4NzgxMzd9.WFM-z_HMDtqcFbTGnU-IOki19saQi0_ffygaWdre2cg";
 
-/* 🌍 VIEWER */
+/* 🌍 VIEWER — 1.109-COMPATIBLE */
 const viewer = new Cesium.Viewer("cesiumContainer", {
-    terrainProvider: Cesium.createWorldTerrain(),
-    imageryProvider: Cesium.createWorldImagery(),
+    terrainProvider: Cesium.Terrain.fromWorldTerrain(),
+    imageryProvider: new Cesium.IonImageryProvider({ assetId: 2 }),
     baseLayerPicker: false,
     geocoder: false,
     animation: false,
@@ -58,11 +61,11 @@ const viewer = new Cesium.Viewer("cesiumContainer", {
     fullscreenButton: false
 });
 
-/* REMOVE SPACE */
+/* ☁️ REMOVE SPACE LOOK */
 viewer.scene.skyBox.show = false;
 viewer.scene.skyAtmosphere.show = false;
 
-/* CAMERA */
+/* 📍 START AT DUBAI */
 viewer.camera.setView({
     destination: Cesium.Cartesian3.fromDegrees(55.2708, 25.2048, 5000),
     orientation: {
@@ -72,13 +75,13 @@ viewer.camera.setView({
     }
 });
 
-/* BUILDINGS */
+/* 🏙️ REAL DUBAI 3D BUILDINGS */
 (async () => {
-    const tileset = await Cesium.Cesium3DTileset.fromIonAssetId(96188);
-    viewer.scene.primitives.add(tileset);
+    const buildings = await Cesium.Cesium3DTileset.fromIonAssetId(96188);
+    viewer.scene.primitives.add(buildings);
 })();
 
-/* HIDE LOADER */
+/* ✅ HIDE LOADING */
 viewer.scene.postRender.addEventListener(function once() {
     document.getElementById("loadingOverlay").style.display = "none";
     viewer.scene.postRender.removeEventListener(once);
